@@ -1,0 +1,46 @@
+<!DOCTYPE html>
+<meta charset="UTF-8" />
+<input type="file" id="files" name="files" accept=".json"/>
+<div id="name"></div>
+<div id="organization"></div>
+<div id="gender"></div>
+<li style="list-style: none;" id="conditions"></li>
+
+<script>
+
+  //stores the output of a parsed JSON file
+  const parsed = jsonText => JSON.parse(jsonText);
+  //creates a new file reader object
+  const fr = new FileReader();
+
+  function writeInfo (data) {
+    let numOfCon = data.conditions.length;
+    let conditions = `<br>`;
+    let fname = data.identifier[0].name[0].given;
+    let lname = data.identifier[0].name[0].family;    
+    for (let i = 0; i < numOfCon; i++){
+                conditions += "- " + data.conditions[i] + `<br>`
+    }
+    
+    document.getElementById('name').innerHTML = 'Name of patient: ' + fname + ' ' + lname;
+    document.getElementById('organization').innerHTML = 'Organization Name: ' + data.managingOrganization.display;
+    document.getElementById('gender').innerHTML = 'Gender: ' + data.gender;
+    document.getElementById('conditions').innerHTML = 'List of all conditions: ' + conditions;
+  };
+
+  function handleFileSelect (evt) {
+    //function is called when input file is Selected
+    //calls FileReader object with file
+    fr.readAsText(evt.target.files[0])
+  };
+
+  fr.onload = e => {
+    //function runs when file is fully loaded
+    //parses file then makes a call to writeInfo to display info on page
+    writeInfo(parsed(e.target.result));
+  };
+
+  //event listener for file input
+  document.getElementById('files').addEventListener('change', handleFileSelect, false);
+
+</script>
